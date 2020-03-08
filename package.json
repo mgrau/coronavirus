@@ -1,0 +1,28 @@
+{
+  "name": "coronavirus",
+  "version": "0.1.0",
+  "description": "Plots of COVID-19 cases as a function of time, broken down by region.",
+  "main": "src/index.tsx",
+  "scripts": {
+    "start": "parcel index.html",
+    "deploy": "parcel build index.html -d ./ --no-source-maps --public-url ./"
+  },
+  "repository": "http://github.com/mgrau/coronavirus",
+  "author": "Matt Grau <matt.grau@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/papaparse": "^5.0.3",
+    "@types/plotly.js": "^1.44.31",
+    "@types/react": "^16.9.23",
+    "axios": "^0.19.2",
+    "papaparse": "^5.1.1",
+    "parcel": "^1.12.4",
+    "plotly.js": "^1.52.3",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-plotly.js": "^2.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}
