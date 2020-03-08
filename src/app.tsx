@@ -36,10 +36,10 @@ export default class App extends React.Component<
       },
       data: {
         t: Object.keys(line)
-          .slice(4, -1)
+          .slice(4)
           .map(value => new Date(value)),
         y: Object.values(line)
-          .slice(4, -1)
+          .slice(4)
           .map(value => Number(value))
       }
     };
