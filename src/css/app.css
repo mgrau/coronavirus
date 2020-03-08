@@ -1,7 +1,6 @@
 #app {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  max-width: 800px;
 }
 
 #app p {
@@ -15,4 +14,31 @@
 #regions {
   grid-column: 1 / 1;
   grid-row: 1;
+}
+
+@media only screen and (min-width: 600px) {
+  #app {
+    grid-template-columns: 200px auto;
+  }
+
+  #app p {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  #app > #log-check {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  #regions {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  #app .figure {
+    grid-column: 2;
+    width: 800px;
+    height: 400px;
+  }
 }

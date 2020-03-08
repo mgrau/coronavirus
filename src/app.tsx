@@ -181,10 +181,11 @@ export default class App extends React.Component<
           {regions}
         </select>
         <div id="log-check">
+          <p>
           <input 
           type="checkbox" 
           onChange={event => this.setState({log: event.target.checked})}/>
-          <label>Log Plot</label>
+          <label>Log Plot</label></p>
         </div>
         {figures}
           <p>
