@@ -76,7 +76,11 @@ export default class App extends React.Component<
           const regions = cases
             .map(value => value.region)
             .filter((value, index, array) => array.indexOf(value) === index);
-          this.setState({ regions: regions, cases: cases });
+          this.setState({
+            selection: [regions[0]],
+            regions: regions,
+            cases: cases
+          });
         }
       }
     );
@@ -115,9 +119,6 @@ export default class App extends React.Component<
       </option>
     ));
 
-    console.log(cases);
-
-    // const figures = null;
     const figures = this.state.selection.map((value, index, array) => {
       return (
         <Figure

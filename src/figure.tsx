@@ -13,7 +13,12 @@ export default class Figure extends React.Component<
   {}
 > {
   render() {
-    if (this.props.cases === undefined) return null;
+    if (
+      this.props.cases === undefined ||
+      this.props.recovered === undefined ||
+      this.props.deaths === undefined
+    )
+      return null;
     return (
       <div className="figure">
         <Plot

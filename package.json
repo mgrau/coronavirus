@@ -4,7 +4,7 @@
   "description": "Plots of COVID-19 cases as a function of time, broken down by region.",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "parcel src/ndex.html",
+    "start": "parcel src/index.html",
     "deploy": "parcel build src/index.html -d ./ --no-source-maps --public-url ./"
   },
   "repository": "http://github.com/mgrau/coronavirus",
@@ -14,7 +14,6 @@
     "@types/papaparse": "^5.0.3",
     "@types/plotly.js": "^1.44.31",
     "@types/react": "^16.9.23",
-    "axios": "^0.19.2",
     "papaparse": "^5.1.1",
     "parcel": "^1.12.4",
     "plotly.js": "^1.52.3",
