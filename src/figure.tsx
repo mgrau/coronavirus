@@ -10,6 +10,7 @@ export default class Figure extends React.Component<
     cases: Row;
     recovered: Row;
     deaths: Row;
+    log?: boolean;
   },
   {}
 > {
@@ -49,6 +50,10 @@ export default class Figure extends React.Component<
           }
         ]}
         layout={{
+          yaxis: {
+            type: this.props.log ? "log" : "linear",
+            autorange: true
+          },
           autosize: true,
           margin: {
             l: 50,

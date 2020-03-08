@@ -5,6 +5,19 @@ import Figure from "./figure";
 
 import "./css/app.css";
 
+export interface Row {
+  region: string;
+  subregion: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  data: {
+    t: Array<Date>;
+    y: Array<number>;
+  };
+}
+
 export default class App extends React.Component<
   {},
   {
@@ -13,6 +26,7 @@ export default class App extends React.Component<
     cases: Array<Row>;
     recovered: Array<Row>;
     deaths: Array<Row>;
+    log: boolean;
   }
 > {
   constructor(props) {
@@ -22,7 +36,8 @@ export default class App extends React.Component<
       regions: [],
       cases: [],
       recovered: [],
-      deaths: []
+      deaths: [],
+      log: false;
     };
   }
 
@@ -75,7 +90,14 @@ export default class App extends React.Component<
           const cases = result.data.map(this.parseLine);
           const regions = cases
             .map(value => value.region)
-            .filter((value, index, array) => array.indexOf(value) === index);
+            .filter((value, index, array) => array.indexOf(value) === index)
+            .sort((a, b) => {
+              const l = cases[0].data.y.length;
+              return (
+                this.filter(cases, [b])[0].data.y[l - 1] -
+                this.filter(cases, [a])[0].data.y[l - 1]
+              );
+            });
           this.setState({
             selection: [regions[0]],
             regions: regions,
@@ -115,7 +137,12 @@ export default class App extends React.Component<
 
     const regions = this.state.regions.map((region, index) => (
       <option key={index} value={region}>
-        {region}
+        {region}:{" "}
+        {
+          this.filter(this.state.cases, [region])[0].data.y[
+            this.state.cases[0].data.y.length - 1
+          ]
+        }
       </option>
     ));
 
@@ -127,12 +154,13 @@ export default class App extends React.Component<
           cases={cases[index]}
           recovered={recovered[index]}
           deaths={deaths[index]}
+          log={this.state.log}
         />
       );
     });
 
     return (
-      <div id="select">
+      <div id="app">
         <select
           multiple
           id="regions"
@@ -146,21 +174,17 @@ export default class App extends React.Component<
         >
           {regions}
         </select>
+        <div id="log-check">
+          <input 
+          type="checkbox" 
+          onChange={event => this.setState({log: event.target.checked})}/>
+          <label>Log Plot</label>
+        </div>
         {figures}
+          <p>
+            Data on COVID-19 cases provided by <a href="https://systems.jhu.edu/research/public-health/ncov/">JHU CSSE</a> on <a href="https://github.com/CSSEGISandData/COVID-19">github</a>
+          </p>
       </div>
     );
   }
-}
-
-export interface Row {
-  region: string;
-  subregion: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  data: {
-    t: Array<Date>;
-    y: Array<number>;
-  };
 }
