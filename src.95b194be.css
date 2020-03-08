@@ -1,0 +1,1 @@
+#select{display:grid;grid-template-columns:1fr 9fr}#regions{grid-column:1;grid-row:1}#select>div{grid-column:2}
