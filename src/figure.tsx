@@ -47,7 +47,7 @@ export default class Figure extends React.Component<
                 x: predict.map(
                   value => new Date(value[0] * msDay + Number(tfit[0]))
                 ),
-                y: predict.map(value => value[1]),
+                y: predict.map(value => Math.round(value[1])),
                 type: "scatter",
                 mode: "lines",
                 name: "extrapolation: " + fit.string,
