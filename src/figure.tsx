@@ -1,5 +1,6 @@
 import * as React from "react";
 import Plot from "react-plotly.js";
+import regression from "regression";
 
 import { Row } from "./app";
 import "./css/figure.css";
@@ -21,9 +22,42 @@ export default class Figure extends React.Component<
       this.props.deaths === undefined
     )
       return null;
+
+    const msDay = 24 * 60 * 60 * 1000;
+    const tfit = this.props.cases.data.t.slice(
+      this.props.cases.data.t.length - 10
+    );
+    const yfit = this.props.cases.data.y.slice(
+      this.props.cases.data.y.length - 10
+    );
+    const data = tfit.map((v, i) => [
+      (Number(tfit[i]) - Number(tfit[0])) / msDay,
+      yfit[i]
+    ]);
+    const fit = regression.exponential(data);
+    const predict = Array.from(Array(14).keys()).map(value =>
+      fit.predict(value)
+    );
+
     return (
       <Plot
         data={[
+          !isNaN(fit.r2)
+            ? {
+                x: predict.map(
+                  value => new Date(value[0] * msDay + Number(tfit[0]))
+                ),
+                y: predict.map(value => value[1]),
+                type: "scatter",
+                mode: "lines",
+                name: "extrapolation: " + fit.string,
+                line: {
+                  dash: "dash",
+                  width: 0.75,
+                  color: "black"
+                }
+              }
+            : {},
           {
             x: this.props.cases.data.t,
             y: this.props.cases.data.y,
@@ -32,6 +66,7 @@ export default class Figure extends React.Component<
             name: "cases",
             marker: { color: "blue" }
           },
+
           {
             x: this.props.recovered.data.t,
             y: this.props.recovered.data.y,
@@ -67,7 +102,13 @@ export default class Figure extends React.Component<
             xanchor: "left",
             y: 1
           },
-          title: this.props.title
+          title:
+            this.props.title +
+            (!isNaN(fit.r2)
+              ? ": cases doubling every " +
+                (Math.log(2) / fit.equation[1]).toFixed(1) +
+                " days"
+              : "")
         }}
         useResizeHandler={true}
         className="figure"
