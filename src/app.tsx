@@ -62,27 +62,21 @@ export default class App extends React.Component<
 
   filter(data: Array<Row>, selection: Array<string>): Array<Row> {
     if (selection === null) return null;
-
     return selection.map(region => {
-      const cases = data.filter(row => row.region === region);
+      const cases = data.filter(row => row.region === region || region === "All");
       if (cases.length === 0) return undefined;
-      return cases.reduce(
-        (previous, current) => {
-          return {
-            ...previous,
-            data: {
-              t: previous.data.t,
-              y: previous.data.y.map(
-                (value, index) => value + current.data.y[index]
-              )
-            }
-          };
-        },
-        {
-          ...cases[0],
-          data: { t: cases[0].data.t, y: Array(cases[0].data.y.length).fill(0) }
-        }
-      );
+      if (cases.length === 1) return cases[0];
+      return cases.reduce((previous, current) => {
+        return {
+          ...previous,
+          data: {
+            t: previous.data.t,
+            y: previous.data.y.map(
+              (value, index) => value + current.data.y[index]
+            )
+          }
+        };
+      }, cases[0]);
     });
   }
 
