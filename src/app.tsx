@@ -65,7 +65,8 @@ export default class App extends React.Component<
     return selection.map(region => {
       const cases = data.filter(row => row.region === region || region === "All");
       if (cases.length === 0) return undefined;
-      const x =  cases.reduce((previous, current) => {
+      if (cases.length === 1) return cases[0];
+      return cases.reduce((previous, current) => {
         return {
           ...previous,
           data: {
@@ -76,7 +77,6 @@ export default class App extends React.Component<
           }
         };
       }, cases[0]);
-      return x;
     });
   }
 
