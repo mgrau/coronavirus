@@ -93,8 +93,8 @@ export default class App extends React.Component<
         header: true,
         download: true,
         complete: result => {
-          const cases = result.data.map(this.parseLine);
-          const regions = cases
+          const cases = result.data.map(this.parseLine).filter(row => row.region !== undefined);
+          const regions = ["All"].concat(cases
             .map(value => value.region)
             .filter((value, index, array) => array.indexOf(value) === index)
             .sort((a, b) => {
@@ -103,7 +103,7 @@ export default class App extends React.Component<
                 this.filter(cases, [b])[0].data.y[l - 1] -
                 this.filter(cases, [a])[0].data.y[l - 1]
               );
-            });
+            }));
           this.setState({
             selection: [regions[0]],
             regions: regions,
@@ -118,7 +118,7 @@ export default class App extends React.Component<
         header: true,
         download: true,
         complete: result => {
-          const cases = result.data.map(this.parseLine);
+          const cases = result.data.map(this.parseLine).filter(row => row.region !== undefined);
           this.setState({ recovered: cases });
         }
       }
@@ -129,7 +129,7 @@ export default class App extends React.Component<
         header: true,
         download: true,
         complete: result => {
-          const cases = result.data.map(this.parseLine);
+          const cases = result.data.map(this.parseLine).filter(row => row.region !== undefined);
           this.setState({ deaths: cases });
         }
       }
