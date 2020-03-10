@@ -5,7 +5,7 @@
   "main": "src/index.tsx",
   "scripts": {
     "start": "parcel src/index.html",
-    "deploy": "parcel build src/index.html -d ./ --no-source-maps --public-url ./"
+    "deploy": "rm *.js *.css; parcel build src/index.html -d ./ --no-source-maps --public-url ./"
   },
   "repository": "http://github.com/mgrau/coronavirus",
   "author": "Matt Grau <matt.grau@gmail.com>",
@@ -14,12 +14,16 @@
     "@types/papaparse": "^5.0.3",
     "@types/plotly.js": "^1.44.31",
     "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "@types/react-plotly.js": "^2.2.4",
+    "@types/regression": "^2.0.0",
     "papaparse": "^5.1.1",
     "parcel": "^1.12.4",
     "plotly.js": "^1.52.3",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "react-plotly.js": "^2.4.0"
+    "react-plotly.js": "^2.4.0",
+    "regression": "^2.0.1"
   },
   "devDependencies": {
     "typescript": "^3.8.3"
