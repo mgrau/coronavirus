@@ -23,6 +23,13 @@ export default class Figure extends React.Component<
     )
       return null;
 
+    const infected = this.props.cases.data.y.map(
+      (value, index) =>
+        value -
+        this.props.deaths.data.y[index] -
+        this.props.recovered.data.y[index]
+    );
+
     const msDay = 24 * 60 * 60 * 1000;
     const tfit = this.props.cases.data.t.slice(
       this.props.cases.data.t.length - 10
@@ -66,7 +73,14 @@ export default class Figure extends React.Component<
             name: "cases",
             marker: { color: "blue" }
           },
-
+          {
+            x: this.props.cases.data.t,
+            y: infected,
+            type: "scatter",
+            mode: "lines",
+            name: "infected",
+            marker: { color: "orange" }
+          },
           {
             x: this.props.recovered.data.t,
             y: this.props.recovered.data.y,
