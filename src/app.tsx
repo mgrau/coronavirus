@@ -26,6 +26,7 @@ export default class App extends React.Component<
     cases: Array<Row>;
     recovered: Array<Row>;
     deaths: Array<Row>;
+    lastUpdated: Date;
     log: boolean;
   }
 > {
@@ -37,7 +38,8 @@ export default class App extends React.Component<
       cases: [],
       recovered: [],
       deaths: [],
-      log: false;
+      lastUpdated: null,
+      log: false
     };
   }
 
@@ -64,7 +66,12 @@ export default class App extends React.Component<
     if (selection === null) return null;
 
     return selection.map(region => {
-      const cases = data.filter(row => row.region === region || region === "All");
+      const cases = data.filter(
+        row =>
+          row.region === region ||
+          region === "All" ||
+          (region === "All except China" && row.region !== "Mainland China")
+      );
       if (cases.length === 0) return undefined;
       if (cases.length === 1) return cases[0];
       return cases.reduce((previous, current) => {
@@ -88,20 +95,25 @@ export default class App extends React.Component<
         header: true,
         download: true,
         complete: result => {
-          const cases = result.data.map(this.parseLine).filter(row => row.region !== undefined);
-          const regions = ["All"].concat(cases
-            .map(value => value.region)
-            .filter((value, index, array) => array.indexOf(value) === index)
-            .sort((a, b) => {
-              const l = cases[0].data.y.length;
-              return (
-                this.filter(cases, [b])[0].data.y[l - 1] -
-                this.filter(cases, [a])[0].data.y[l - 1]
-              );
-            }));
+          const cases = result.data
+            .map(this.parseLine)
+            .filter(row => row.region !== undefined);
+          const regions = ["All", "All except China"].concat(
+            cases
+              .map(value => value.region)
+              .filter((value, index, array) => array.indexOf(value) === index)
+              .sort((a, b) => {
+                const l = cases[0].data.y.length;
+                return (
+                  this.filter(cases, [b])[0].data.y[l - 1] -
+                  this.filter(cases, [a])[0].data.y[l - 1]
+                );
+              })
+          );
           this.setState({
             selection: [regions[0]],
             regions: regions,
+            lastUpdated: cases[0].data.t[cases[0].data.t.length - 1],
             cases: cases
           });
         }
@@ -113,7 +125,9 @@ export default class App extends React.Component<
         header: true,
         download: true,
         complete: result => {
-          const cases = result.data.map(this.parseLine).filter(row => row.region !== undefined);
+          const cases = result.data
+            .map(this.parseLine)
+            .filter(row => row.region !== undefined);
           this.setState({ recovered: cases });
         }
       }
@@ -124,7 +138,9 @@ export default class App extends React.Component<
         header: true,
         download: true,
         complete: result => {
-          const cases = result.data.map(this.parseLine).filter(row => row.region !== undefined);
+          const cases = result.data
+            .map(this.parseLine)
+            .filter(row => row.region !== undefined);
           this.setState({ deaths: cases });
         }
       }
@@ -177,15 +193,25 @@ export default class App extends React.Component<
         </select>
         <div id="log-check">
           <p>
-          <input 
-          type="checkbox" 
-          onChange={event => this.setState({log: event.target.checked})}/>
-          <label>Log Plot</label></p>
+            <input
+              type="checkbox"
+              onChange={event => this.setState({ log: event.target.checked })}
+            />
+            <label>Log Plot</label>
+          </p>
         </div>
         {figures}
-          <p>
-            Data on COVID-19 cases provided by <a href="https://systems.jhu.edu/research/public-health/ncov/">JHU CSSE</a> on <a href="https://github.com/CSSEGISandData/COVID-19">github</a>
-          </p>
+        <p>
+          Data on COVID-19 cases provided by{" "}
+          <a href="https://systems.jhu.edu/research/public-health/ncov/">
+            JHU CSSE
+          </a>{" "}
+          on <a href="https://github.com/CSSEGISandData/COVID-19">github</a>.
+          Last updated on{" "}
+          {this.state.lastUpdated === null
+            ? ""
+            : this.state.lastUpdated.toDateString()}
+        </p>
       </div>
     );
   }
