@@ -107,7 +107,7 @@ export default class Figure extends React.Component<
           margin: {
             l: 50,
             r: 50,
-            b: 25,
+            b: 30,
             t: 75,
             pad: 0
           },
