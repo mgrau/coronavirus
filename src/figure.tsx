@@ -34,9 +34,7 @@ export default class Figure extends React.Component<
     const tfit = this.props.cases.data.t.slice(
       this.props.cases.data.t.length - 10
     );
-    const yfit = this.props.cases.data.y.slice(
-      this.props.cases.data.y.length - 10
-    );
+    const yfit = infected.slice(this.props.cases.data.y.length - 10);
     const data = tfit.map((v, i) => [
       (Number(tfit[i]) - Number(tfit[0])) / msDay,
       yfit[i]
@@ -120,9 +118,7 @@ export default class Figure extends React.Component<
           title:
             this.props.title +
             (!isNaN(fit.r2)
-              ? ": cases doubling every " +
-                (Math.log(2) / fit.equation[1]).toFixed(1) +
-                " days"
+              ? `cases ${fit.equation[1] > 0 ? "doubling" : "halving"} every ${(Math.log(2) / Math.abs(fit.equation[1])).toFixed(1)} days`
               : "")
         }}
         useResizeHandler={true}
