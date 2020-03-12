@@ -114,7 +114,8 @@ export default class Figure extends React.Component<
           legend: {
             x: 0,
             xanchor: "left",
-            y: 1
+            y: 1,
+            bgcolor: "rgba(0,0,0,0)"
           },
           title:
             this.props.title +
