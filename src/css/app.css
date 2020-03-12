@@ -38,7 +38,7 @@
 
   #app .figure {
     grid-column: 2;
-    width: 800px;
-    height: 400px;
+    width: 64vh;
+    height: 40vh;
   }
 }

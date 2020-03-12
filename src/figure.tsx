@@ -107,14 +107,15 @@ export default class Figure extends React.Component<
           margin: {
             l: 50,
             r: 50,
-            b: 25,
+            b: 30,
             t: 75,
             pad: 0
           },
           legend: {
             x: 0,
             xanchor: "left",
-            y: 1
+            y: 1,
+            bgcolor: "rgba(0,0,0,0)"
           },
           title:
             this.props.title +

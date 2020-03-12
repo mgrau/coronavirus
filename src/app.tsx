@@ -69,11 +69,11 @@ export default class App extends React.Component<
         row =>
           row.region === region ||
           region === "All" ||
-          (region === "All except China" && row.region !== "Mainland China")
+          (region === "All except China" && row.region !== "China")
       );
       if (cases.length === 0) return undefined;
       if (cases.length === 1) return cases[0];
-      return cases.reduce((previous, current) => {
+      return cases.slice(1).reduce((previous, current) => {
         return {
           ...previous,
           data: {
