@@ -118,7 +118,11 @@ export default class Figure extends React.Component<
           title:
             this.props.title +
             (!isNaN(fit.r2)
-              ? `cases ${fit.equation[1] > 0 ? "doubling" : "halving"} every ${(Math.log(2) / Math.abs(fit.equation[1])).toFixed(1)} days`
+              ? ` cases ${
+                  fit.equation[1] > 0 ? "doubling" : "halving"
+                } every ${(Math.log(2) / Math.abs(fit.equation[1])).toFixed(
+                  1
+                )} days`
               : "")
         }}
         useResizeHandler={true}
