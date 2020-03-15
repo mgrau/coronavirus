@@ -39,7 +39,7 @@
 
   #app .figure {
     grid-column: 2;
-    width: 64vh;
-    height: 40vh;
+    width: min(calc(100vw - 200px), 80vh);
+    height: 50vh;
   }
 }
