@@ -4,19 +4,7 @@ import Papa from "papaparse";
 import Figure from "./figure";
 
 import "./css/app.css";
-
-export interface Row {
-  region: string;
-  subregion: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  data: {
-    t: Array<Date>;
-    y: Array<number>;
-  };
-}
+import { Row } from "./types";
 
 export default class App extends React.Component<
   {},

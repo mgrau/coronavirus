@@ -2,7 +2,7 @@ import * as React from "react";
 import Plot from "react-plotly.js";
 import regression from "regression";
 
-import { Row } from "./app";
+import { Row } from "./types";
 import "./css/figure.css";
 
 export default class Figure extends React.Component<
