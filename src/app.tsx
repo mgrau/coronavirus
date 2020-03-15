@@ -22,6 +22,7 @@ export default class App extends React.Component<
     length: number;
     lastUpdated: Date;
     log: boolean;
+    alphabetical: boolean;
   }
 > {
   constructor(props) {
@@ -32,7 +33,8 @@ export default class App extends React.Component<
       data: [],
       length: 0,
       lastUpdated: null,
-      log: false
+      log: false,
+      alphabetical: false
     };
   }
 
@@ -85,6 +87,7 @@ export default class App extends React.Component<
     return (
       <div id="app">
         <Regions
+          alphabetical={this.state.alphabetical}
           regions={this.state.regions.map(region => {
             return {
               region: region,
@@ -100,6 +103,14 @@ export default class App extends React.Component<
               onChange={event => this.setState({ log: event.target.checked })}
             />
             <label>Log Plot</label>
+
+            <input
+              type="checkbox"
+              onChange={event =>
+                this.setState({ alphabetical: event.target.checked })
+              }
+            />
+            <label>Alphabetical</label>
           </p>
         </div>
 
