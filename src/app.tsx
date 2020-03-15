@@ -8,6 +8,7 @@ import { parseAll } from "./parse";
 import Regions from "./regions";
 import Header from "./header";
 import Footer from "./footer";
+import CombinedFigure from "./combined";
 
 function addArray(a: Array<number>, b: Array<number>): Array<number> {
   return a.map((value, index) => value + b[index]);
@@ -23,6 +24,7 @@ export default class App extends React.Component<
     lastUpdated: Date;
     log: boolean;
     alphabetical: boolean;
+    combined: boolean;
   }
 > {
   constructor(props) {
@@ -34,7 +36,8 @@ export default class App extends React.Component<
       length: 0,
       lastUpdated: null,
       log: false,
-      alphabetical: false
+      alphabetical: false,
+      combined: true
     };
   }
 
@@ -86,9 +89,21 @@ export default class App extends React.Component<
   };
 
   render() {
-    const figures = this.filter(this.state.selection).map((row, index) => {
-      return <Figure {...row} key={index} log={this.state.log} />;
-    });
+    const figures =
+      this.state.combined && this.state.selection.length > 1 ? (
+        <CombinedFigure
+          regions={this.filter(this.state.selection).map(row => ({
+            name: row.region,
+            t: row.t,
+            y: row.infected
+          }))}
+          log={this.state.log}
+        />
+      ) : (
+        this.filter(this.state.selection).map((row, index) => {
+          return <Figure {...row} key={index} log={this.state.log} />;
+        })
+      );
 
     return (
       <div id="app">
@@ -106,17 +121,19 @@ export default class App extends React.Component<
           <p>
             <input
               type="checkbox"
+              defaultChecked={this.state.log}
               onChange={event => this.setState({ log: event.target.checked })}
             />
             <label>Log Plot</label>
 
-            {/* <input
+            <input
               type="checkbox"
+              defaultChecked={this.state.combined}
               onChange={event =>
-                this.setState({ alphabetical: event.target.checked })
+                this.setState({ combined: event.target.checked })
               }
             />
-            <label>Alphabetical</label> */}
+            <label>Combined Plot</label>
           </p>
         </div>
 
