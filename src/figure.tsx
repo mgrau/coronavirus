@@ -7,7 +7,7 @@ import "./css/figure.css";
 
 export default class Figure extends React.Component<
   {
-    title: string;
+    region: string;
     t: Array<Date>;
     cases: Array<number>;
     infected: Array<number>;
@@ -109,7 +109,7 @@ export default class Figure extends React.Component<
             bgcolor: "rgba(0,0,0,0)"
           },
           title:
-            this.props.title +
+            this.props.region +
             (!isNaN(fit.r2)
               ? ` cases ${
                   fit.equation[1] > 0 ? "doubling" : "halving"

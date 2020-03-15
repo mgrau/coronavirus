@@ -91,18 +91,7 @@ export default class App extends React.Component<
       ));
 
     const figures = this.filter(this.state.selection).map((row, index) => {
-      return (
-        <Figure
-          title={row.region}
-          t={row.t}
-          cases={row.cases}
-          recovered={row.recovered}
-          deaths={row.deaths}
-          infected={row.infected}
-          key={index}
-          log={this.state.log}
-        />
-      );
+      return <Figure {...row} key={index} log={this.state.log} />;
     });
 
     return (
