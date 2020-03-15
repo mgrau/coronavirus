@@ -3,7 +3,8 @@
   grid-template-columns: 1fr 1fr;
 }
 
-#app p {
+#header,
+#footer {
   grid-column: 1/ 3;
 }
 
@@ -21,7 +22,7 @@
     grid-template-columns: 200px auto;
   }
 
-  #app p {
+  #app #header {
     grid-row: 1;
     grid-column: 2;
   }

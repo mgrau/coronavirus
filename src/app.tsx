@@ -1,11 +1,13 @@
 import * as React from "react";
-import Papa from "papaparse";
 
 import Figure from "./figure";
 
 import "./css/app.css";
-import { Row, Combined } from "./types";
+import { Combined } from "./types";
 import { parseAll } from "./parse";
+import Regions from "./regions";
+import Header from "./header";
+import Footer from "./footer";
 
 function addArray(a: Array<number>, b: Array<number>): Array<number> {
   return a.map((value, index) => value + b[index]);
@@ -76,39 +78,21 @@ export default class App extends React.Component<
   };
 
   render() {
-    const regions = this.state.regions
-      .map(region => {
-        return {
-          region: region,
-          cases: this.filter([region])[0].cases[this.state.length]
-        };
-      })
-      .sort((a, b) => b.cases - a.cases)
-      .map((value, index) => (
-        <option key={index} value={value.region}>
-          {value.region}: {value.cases}
-        </option>
-      ));
-
     const figures = this.filter(this.state.selection).map((row, index) => {
       return <Figure {...row} key={index} log={this.state.log} />;
     });
 
     return (
       <div id="app">
-        <select
-          multiple
-          id="regions"
-          onChange={event => {
-            this.setState({
-              selection: Array.from(event.target.options)
-                .filter(option => option.selected)
-                .map(option => option.value)
-            });
-          }}
-        >
-          {regions}
-        </select>
+        <Regions
+          regions={this.state.regions.map(region => {
+            return {
+              region: region,
+              cases: this.filter([region])[0].cases[this.state.length]
+            };
+          })}
+          select={selection => this.setState({ selection: selection })}
+        />
         <div id="log-check">
           <p>
             <input
@@ -118,18 +102,10 @@ export default class App extends React.Component<
             <label>Log Plot</label>
           </p>
         </div>
+
         {figures}
-        <p>
-          Data on COVID-19 cases provided by{" "}
-          <a href="https://systems.jhu.edu/research/public-health/ncov/">
-            JHU CSSE
-          </a>{" "}
-          on <a href="https://github.com/CSSEGISandData/COVID-19">github</a>.
-          Last updated on{" "}
-          {this.state.lastUpdated === null
-            ? ""
-            : this.state.lastUpdated.toDateString()}
-        </p>
+        <Header lastUpdated={this.state.lastUpdated} />
+        <Footer />
       </div>
     );
   }

@@ -2,7 +2,6 @@ import * as React from "react";
 import Plot from "react-plotly.js";
 import regression from "regression";
 
-import { Row } from "./types";
 import "./css/figure.css";
 
 export default class Figure extends React.Component<
@@ -26,16 +25,16 @@ export default class Figure extends React.Component<
       return null;
 
     const msDay = 24 * 60 * 60 * 1000;
-    const tfit = this.props.t.slice(this.props.t.length - 10);
-    const yfit = this.props.infected.slice(this.props.cases.length - 10);
-    const data = tfit.map((v, i) => [
-      (Number(tfit[i]) - Number(tfit[0])) / msDay,
-      yfit[i]
-    ]);
-    const fit = regression.exponential(data);
-    const predict = Array.from(Array(14).keys()).map(value =>
-      fit.predict(value)
+    const daysToFit = 10;
+    const daysToPredict = 7;
+    const tfit = this.props.t.slice(this.props.t.length - daysToFit);
+    const yfit = this.props.infected.slice(this.props.cases.length - daysToFit);
+    const fit = regression.exponential(
+      tfit.map((v, i) => [(Number(tfit[i]) - Number(tfit[0])) / msDay, yfit[i]])
     );
+    const predict = Array.from(
+      Array(daysToFit + daysToPredict).keys()
+    ).map(value => fit.predict(value));
 
     return (
       <Plot
