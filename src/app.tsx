@@ -51,15 +51,21 @@ export default class App extends React.Component<
       if (cases.length === 0) return undefined;
       else if (cases.length === 1) return cases[0];
       else {
-        return cases.slice(1).reduce((previous, current) => {
-          return {
-            ...previous,
-            cases: addArray(previous.cases, current.cases),
-            infected: addArray(previous.infected, current.infected),
-            recovered: addArray(previous.recovered, current.recovered),
-            deaths: addArray(previous.deaths, current.deaths)
-          };
-        }, cases[0]);
+        return cases.slice(1).reduce(
+          (previous, current) => {
+            return {
+              ...previous,
+              cases: addArray(previous.cases, current.cases),
+              infected: addArray(previous.infected, current.infected),
+              recovered: addArray(previous.recovered, current.recovered),
+              deaths: addArray(previous.deaths, current.deaths)
+            };
+          },
+          {
+            ...cases[0],
+            region: region
+          }
+        );
       }
     });
   }
@@ -104,13 +110,13 @@ export default class App extends React.Component<
             />
             <label>Log Plot</label>
 
-            <input
+            {/* <input
               type="checkbox"
               onChange={event =>
                 this.setState({ alphabetical: event.target.checked })
               }
             />
-            <label>Alphabetical</label>
+            <label>Alphabetical</label> */}
           </p>
         </div>
 
