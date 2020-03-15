@@ -16,6 +16,8 @@ export async function parseAll(): Promise<Array<Combined>> {
   const cases = await parseData(URLS.cases);
   const recovered = await parseData(URLS.recovered);
   const deaths = await parseData(URLS.deaths);
+
+  cases.every(row => row.data.y[row.data.y.length - 1] === 0);
   return (
     cases
       .map((row, index) => {
@@ -35,9 +37,7 @@ export async function parseAll(): Promise<Array<Combined>> {
       })
       // if the raw data ends in zeros, remove that day.
       .map(row => {
-        if (row.cases[row.cases.length - 1] > 0) {
-          return row;
-        } else {
+        if (cases.every(row => row.data.y[row.data.y.length - 1] === 0)) {
           return {
             ...row,
             t: row.t.slice(0, -1),
@@ -46,6 +46,8 @@ export async function parseAll(): Promise<Array<Combined>> {
             recovered: row.recovered.slice(0, -1),
             deaths: row.deaths.slice(0, -1)
           };
+        } else {
+          return row;
         }
       })
   );
