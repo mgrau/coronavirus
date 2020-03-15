@@ -15,6 +15,7 @@ export default function Figure(props: {
 }) {
   if (
     props.cases === undefined ||
+    props.infected === undefined ||
     props.recovered === undefined ||
     props.deaths === undefined
   )
