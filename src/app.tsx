@@ -4,16 +4,20 @@ import Papa from "papaparse";
 import Figure from "./figure";
 
 import "./css/app.css";
-import { Row } from "./types";
+import { Row, Combined } from "./types";
+import { parseAll } from "./parse";
+
+function addArray(a: Array<number>, b: Array<number>): Array<number> {
+  return a.map((value, index) => value + b[index]);
+}
 
 export default class App extends React.Component<
   {},
   {
     selection: Array<string>;
     regions: Array<string>;
-    cases: Array<Row>;
-    recovered: Array<Row>;
-    deaths: Array<Row>;
+    data: Array<Combined>;
+    length: number;
     lastUpdated: Date;
     log: boolean;
   }
@@ -23,142 +27,79 @@ export default class App extends React.Component<
     this.state = {
       selection: [],
       regions: [],
-      cases: [],
-      recovered: [],
-      deaths: [],
+      data: [],
+      length: 0,
       lastUpdated: null,
       log: false
     };
   }
 
-  parseLine(line: Object): Row {
-    return {
-      region: line["Country/Region"],
-      subregion: line["Province/State"],
-      location: {
-        latitude: Number(line["Lat"]),
-        longitude: Number(line["Long"])
-      },
-      data: {
-        t: Object.keys(line)
-          .slice(4)
-          .map(value => new Date(value)),
-        y: Object.values(line)
-          .slice(4)
-          .map(value => Number(value))
-      }
-    };
-  }
-
-  filter(data: Array<Row>, selection: Array<string>): Array<Row> {
+  filter(selection: Array<string>): Array<Combined> {
     if (selection === null) return null;
 
     return selection.map(region => {
-      const cases = data.filter(
+      const cases = this.state.data.filter(
         row =>
           row.region === region ||
           region === "All" ||
           (region === "All except China" && row.region !== "China")
       );
       if (cases.length === 0) return undefined;
-      if (cases.length === 1) return cases[0];
-      return cases.slice(1).reduce((previous, current) => {
-        return {
-          ...previous,
-          data: {
-            t: previous.data.t,
-            y: previous.data.y.map(
-              (value, index) => value + current.data.y[index]
-            )
-          }
-        };
-      }, cases[0]);
+      else if (cases.length === 1) return cases[0];
+      else {
+        return cases.slice(1).reduce((previous, current) => {
+          return {
+            ...previous,
+            cases: addArray(previous.cases, current.cases),
+            infected: addArray(previous.infected, current.infected),
+            recovered: addArray(previous.recovered, current.recovered),
+            deaths: addArray(previous.deaths, current.deaths)
+          };
+        }, cases[0]);
+      }
     });
   }
 
-  componentDidMount() {
-    Papa.parse(
-      "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv",
-      {
-        header: true,
-        download: true,
-        complete: result => {
-          const cases = result.data
-            .map(this.parseLine)
-            .filter(row => row.region !== undefined);
-          const regions = ["All", "All except China"].concat(
-            cases
-              .map(value => value.region)
-              .filter((value, index, array) => array.indexOf(value) === index)
-              .sort((a, b) => {
-                const l = cases[0].data.y.length;
-                return (
-                  this.filter(cases, [b])[0].data.y[l - 1] -
-                  this.filter(cases, [a])[0].data.y[l - 1]
-                );
-              })
-          );
-          this.setState({
-            selection: [regions[0]],
-            regions: regions,
-            lastUpdated: cases[0].data.t[cases[0].data.t.length - 1],
-            cases: cases
-          });
-        }
-      }
-    );
-    Papa.parse(
-      "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv",
-      {
-        header: true,
-        download: true,
-        complete: result => {
-          const cases = result.data
-            .map(this.parseLine)
-            .filter(row => row.region !== undefined);
-          this.setState({ recovered: cases });
-        }
-      }
-    );
-    Papa.parse(
-      "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv",
-      {
-        header: true,
-        download: true,
-        complete: result => {
-          const cases = result.data
-            .map(this.parseLine)
-            .filter(row => row.region !== undefined);
-          this.setState({ deaths: cases });
-        }
-      }
-    );
-  }
+  componentDidMount = async () => {
+    const data = await parseAll();
+    const regions = ["All", "All except China"]
+      .concat(data.map(value => value.region))
+      .filter((value, index, array) => array.indexOf(value) === index);
+    const length = data[0].t.length - 1;
+    this.setState({
+      selection: [regions[0]],
+      regions: regions,
+      length: length,
+      lastUpdated: data[0].t[length],
+      data: data
+    });
+  };
 
   render() {
-    const cases = this.filter(this.state.cases, this.state.selection);
-    const recovered = this.filter(this.state.recovered, this.state.selection);
-    const deaths = this.filter(this.state.deaths, this.state.selection);
+    const regions = this.state.regions
+      .map(region => {
+        return {
+          region: region,
+          cases: this.filter([region])[0].cases[this.state.length]
+        };
+      })
+      .sort((a, b) => b.cases - a.cases)
+      .map((value, index) => (
+        <option key={index} value={value.region}>
+          {value.region}: {value.cases}
+        </option>
+      ));
 
-    const regions = this.state.regions.map((region, index) => (
-      <option key={index} value={region}>
-        {region}:{" "}
-        {
-          this.filter(this.state.cases, [region])[0].data.y[
-            this.state.cases[0].data.y.length - 1
-          ]
-        }
-      </option>
-    ));
-
-    const figures = this.state.selection.map((value, index, array) => {
+    const figures = this.filter(this.state.selection).map((row, index) => {
       return (
         <Figure
+          title={row.region}
+          t={row.t}
+          cases={row.cases}
+          recovered={row.recovered}
+          deaths={row.deaths}
+          infected={row.infected}
           key={index}
-          title={value}
-          cases={cases[index]}
-          recovered={recovered[index]}
-          deaths={deaths[index]}
           log={this.state.log}
         />
       );

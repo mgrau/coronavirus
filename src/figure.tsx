@@ -8,9 +8,11 @@ import "./css/figure.css";
 export default class Figure extends React.Component<
   {
     title: string;
-    cases: Row;
-    recovered: Row;
-    deaths: Row;
+    t: Array<Date>;
+    cases: Array<number>;
+    infected: Array<number>;
+    recovered: Array<number>;
+    deaths: Array<number>;
     log?: boolean;
   },
   {}
@@ -23,18 +25,9 @@ export default class Figure extends React.Component<
     )
       return null;
 
-    const infected = this.props.cases.data.y.map(
-      (value, index) =>
-        value -
-        this.props.deaths.data.y[index] -
-        this.props.recovered.data.y[index]
-    );
-
     const msDay = 24 * 60 * 60 * 1000;
-    const tfit = this.props.cases.data.t.slice(
-      this.props.cases.data.t.length - 10
-    );
-    const yfit = infected.slice(this.props.cases.data.y.length - 10);
+    const tfit = this.props.t.slice(this.props.t.length - 10);
+    const yfit = this.props.infected.slice(this.props.cases.length - 10);
     const data = tfit.map((v, i) => [
       (Number(tfit[i]) - Number(tfit[0])) / msDay,
       yfit[i]
@@ -64,32 +57,32 @@ export default class Figure extends React.Component<
               }
             : {},
           {
-            x: this.props.cases.data.t,
-            y: this.props.cases.data.y,
+            x: this.props.t,
+            y: this.props.cases,
             type: "scatter",
             mode: "lines",
             name: "cases",
             marker: { color: "blue" }
           },
           {
-            x: this.props.cases.data.t,
-            y: infected,
+            x: this.props.t,
+            y: this.props.infected,
             type: "scatter",
             mode: "lines",
             name: "infected",
             marker: { color: "orange" }
           },
           {
-            x: this.props.recovered.data.t,
-            y: this.props.recovered.data.y,
+            x: this.props.t,
+            y: this.props.recovered,
             type: "scatter",
             mode: "lines",
             name: "recovered",
             marker: { color: "green" }
           },
           {
-            x: this.props.deaths.data.t,
-            y: this.props.deaths.data.y,
+            x: this.props.t,
+            y: this.props.deaths,
             type: "scatter",
             mode: "lines",
             name: "deaths",
