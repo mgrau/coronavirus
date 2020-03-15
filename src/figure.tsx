@@ -1,6 +1,6 @@
 import * as React from "react";
 import Plot from "react-plotly.js";
-import regression from "regression";
+import fit from "./fit";
 
 import "./css/figure.css";
 
@@ -24,37 +24,23 @@ export default class Figure extends React.Component<
     )
       return null;
 
-    const msDay = 24 * 60 * 60 * 1000;
-    const daysToFit = 10;
-    const daysToPredict = 7;
-    const tfit = this.props.t.slice(this.props.t.length - daysToFit);
-    const yfit = this.props.infected.slice(this.props.cases.length - daysToFit);
-    const fit = regression.exponential(
-      tfit.map((v, i) => [(Number(tfit[i]) - Number(tfit[0])) / msDay, yfit[i]])
-    );
-    const predict = Array.from(
-      Array(daysToFit + daysToPredict).keys()
-    ).map(value => fit.predict(value));
-
+    const predict = fit(this.props.t, this.props.infected);
     return (
       <Plot
         data={[
-          !isNaN(fit.r2)
-            ? {
-                x: predict.map(
-                  value => new Date(value[0] * msDay + Number(tfit[0]))
-                ),
-                y: predict.map(value => Math.round(value[1])),
+          isNaN(predict.r2)
+            ? {}
+            : {
+                ...predict,
                 type: "scatter",
                 mode: "lines",
-                name: "extrapolation: " + fit.string,
+                name: "extrapolation: " + predict.string,
                 line: {
                   dash: "dash",
                   width: 0.75,
                   color: "black"
                 }
-              }
-            : {},
+              },
           {
             x: this.props.t,
             y: this.props.cases,
@@ -109,10 +95,10 @@ export default class Figure extends React.Component<
           },
           title:
             this.props.region +
-            (!isNaN(fit.r2)
+            (!isNaN(predict.r2)
               ? ` cases ${
-                  fit.equation[1] > 0 ? "doubling" : "halving"
-                } every ${(Math.log(2) / Math.abs(fit.equation[1])).toFixed(
+                  predict.equation[1] > 0 ? "doubling" : "halving"
+                } every ${(Math.log(2) / Math.abs(predict.equation[1])).toFixed(
                   1
                 )} days`
               : "")
