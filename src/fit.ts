@@ -6,7 +6,7 @@ export default function fit(
   t: Array<Date>,
   y: Array<number>,
   daysToFit = 10,
-  daysToPredict = 7
+  daysToPredict = 5
 ) {
   const tfit = t.slice(t.length - daysToFit);
   const yfit = y.slice(y.length - daysToFit);
@@ -17,8 +17,12 @@ export default function fit(
     Array(daysToFit + daysToPredict).keys()
   ).map(value => Math.round(fit.predict(value)[1]));
 
+  const tpredict = Array.from(Array(daysToFit + daysToPredict).keys()).map(
+    value => new Date(Number(tfit[0]) + msToDay * value)
+  );
+
   return {
-    x: tfit,
+    x: tpredict,
     y: predict,
     string: fit.string,
     r2: fit.r2,
