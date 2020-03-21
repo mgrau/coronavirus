@@ -54,7 +54,7 @@ export default function Figure(props: {
           y: !props.fraction
             ? props.infected
             : props.infected.map((value, index) =>
-                (value / props.cases[index]).toFixed(2)
+                (value / props.cases[index]).toFixed(3)
               ),
           type: "scatter",
           mode: "lines",
@@ -66,7 +66,7 @@ export default function Figure(props: {
           y: !props.fraction
             ? props.recovered
             : props.recovered.map((value, index) =>
-                (value / props.cases[index]).toFixed(2)
+                (value / props.cases[index]).toFixed(3)
               ),
           type: "scatter",
           mode: "lines",
@@ -78,7 +78,7 @@ export default function Figure(props: {
           y: !props.fraction
             ? props.deaths
             : props.deaths.map((value, index) =>
-                (value / props.cases[index]).toFixed(2)
+                (value / props.cases[index]).toFixed(3)
               ),
           type: "scatter",
           mode: "lines",
