@@ -25,6 +25,7 @@ export default class App extends React.Component<
     log: boolean;
     alphabetical: boolean;
     combined: boolean;
+    fraction: boolean;
   }
 > {
   constructor(props) {
@@ -37,7 +38,8 @@ export default class App extends React.Component<
       lastUpdated: null,
       log: false,
       alphabetical: false,
-      combined: true
+      combined: true,
+      fraction: false
     };
   }
 
@@ -101,7 +103,14 @@ export default class App extends React.Component<
         />
       ) : (
         this.filter(this.state.selection).map((row, index) => {
-          return <Figure {...row} key={index} log={this.state.log} />;
+          return (
+            <Figure
+              {...row}
+              key={index}
+              log={this.state.log}
+              fraction={this.state.fraction}
+            />
+          );
         })
       );
 
@@ -139,6 +148,18 @@ export default class App extends React.Component<
 
         {figures}
         <Header lastUpdated={this.state.lastUpdated} />
+        <div id="options">
+          <p>
+            <input
+              type="checkbox"
+              defaultChecked={this.state.fraction}
+              onChange={event =>
+                this.setState({ fraction: event.target.checked })
+              }
+            />
+            <label>Show data as fraction of cases</label>
+          </p>
+        </div>
         <Footer />
       </div>
     );

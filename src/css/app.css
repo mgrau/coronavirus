@@ -4,7 +4,8 @@
 }
 
 #header,
-#footer {
+#footer,
+#options {
   grid-column: 1/ 3;
 }
 

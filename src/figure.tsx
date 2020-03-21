@@ -12,6 +12,7 @@ export default function Figure(props: {
   recovered: Array<number>;
   deaths: Array<number>;
   log?: boolean;
+  fraction?: boolean;
 }) {
   if (
     props.cases === undefined ||
@@ -25,7 +26,7 @@ export default function Figure(props: {
   return (
     <Plot
       data={[
-        isNaN(predict.r2)
+        isNaN(predict.r2) || props.fraction
           ? {}
           : {
               ...predict,
@@ -38,17 +39,23 @@ export default function Figure(props: {
                 color: "black"
               }
             },
+        props.fraction
+          ? {}
+          : {
+              x: props.t,
+              y: props.cases,
+              type: "scatter",
+              mode: "lines",
+              name: "cases",
+              marker: { color: "blue" }
+            },
         {
           x: props.t,
-          y: props.cases,
-          type: "scatter",
-          mode: "lines",
-          name: "cases",
-          marker: { color: "blue" }
-        },
-        {
-          x: props.t,
-          y: props.infected,
+          y: !props.fraction
+            ? props.infected
+            : props.infected.map((value, index) =>
+                (value / props.cases[index]).toFixed(2)
+              ),
           type: "scatter",
           mode: "lines",
           name: "infected",
@@ -56,7 +63,11 @@ export default function Figure(props: {
         },
         {
           x: props.t,
-          y: props.recovered,
+          y: !props.fraction
+            ? props.recovered
+            : props.recovered.map((value, index) =>
+                (value / props.cases[index]).toFixed(2)
+              ),
           type: "scatter",
           mode: "lines",
           name: "recovered",
@@ -64,7 +75,11 @@ export default function Figure(props: {
         },
         {
           x: props.t,
-          y: props.deaths,
+          y: !props.fraction
+            ? props.deaths
+            : props.deaths.map((value, index) =>
+                (value / props.cases[index]).toFixed(2)
+              ),
           type: "scatter",
           mode: "lines",
           name: "deaths",
