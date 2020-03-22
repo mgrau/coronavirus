@@ -7,6 +7,7 @@ import Regions from "./regions";
 
 export default function CombinedFigure(props: {
   regions: Array<{ name: string; t: Array<Date>; y: Array<number> }>;
+  title: string;
   log?: boolean;
 }) {
   //   const predict = fit(props.t, props.infected);
@@ -39,7 +40,7 @@ export default function CombinedFigure(props: {
           y: 1,
           bgcolor: "rgba(0,0,0,0)"
         },
-        title: "Number of current cases"
+        title: props.title
       }}
       useResizeHandler={true}
       className="figure"
