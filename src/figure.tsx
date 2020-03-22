@@ -41,16 +41,16 @@ export default function Figure(props: {
   }
   if (props.percapita) {
     cases = props.cases.map(value =>
-      Number(((1000 * value) / props.population).toFixed(4))
+      Number(((100000 * value) / props.population).toFixed(4))
     );
     infected = props.infected.map(value =>
-      Number(((1000 * value) / props.population).toFixed(4))
+      Number(((100000 * value) / props.population).toFixed(4))
     );
     recovered = props.recovered.map(value =>
-      Number(((1000 * value) / props.population).toFixed(4))
+      Number(((100000 * value) / props.population).toFixed(4))
     );
     deaths = props.deaths.map(value =>
-      Number(((1000 * value) / props.population).toFixed(4))
+      Number(((100000 * value) / props.population).toFixed(4))
     );
   }
 
