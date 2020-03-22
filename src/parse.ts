@@ -1,6 +1,36 @@
 import Papa from "papaparse";
 import { Row, Combined } from "./types";
 
+const country_names = {
+  SriLanka: "Sri Lanka",
+  "United States": "US",
+  "South Korea": "Korea, South",
+  Congo: "Congo (Kinshasa)",
+  "Russian Federation": "Russia",
+  Gambia: "Gambia, The",
+  Bahamas: "Bahamas, The",
+  "Fiji Islands": "Fiji",
+  "Ivory Coast": "Cote d'Ivoire",
+  "Czech Republic": "Czechia"
+};
+
+const population = require("country-json/src/country-by-population")
+  .concat([
+    { country: "Serbia", population: 7022000 },
+    { country: "Holy See", population: 1000 },
+    { country: "Cruise Ship", population: 3711 },
+    { country: "Taiwan*", population: 23780000 },
+    { country: "Eswatini", population: 1367000 },
+    { country: "Kosovo", population: 1831000 },
+    { country: "Congo (Brazzaville)", population: 1800000 },
+    { country: "Montenegro", population: 631219 }
+  ])
+  .map(row =>
+    country_names[row.country] === undefined
+      ? row
+      : { ...row, country: country_names[row.country] }
+  );
+
 // URLs from the JHU CSSE dataset
 const URLS = {
   cases:
@@ -17,13 +47,15 @@ export async function parseAll(): Promise<Array<Combined>> {
   const recovered = await parseData(URLS.recovered);
   const deaths = await parseData(URLS.deaths);
 
-  cases.every(row => row.data.y[row.data.y.length - 1] === 0);
   return (
     cases
       .map((row, index) => {
+        const cpop = population.find(crow => crow.country == row.region);
+
         return {
           region: row.region,
           subregion: row.subregion,
+          population: cpop === undefined ? undefined : cpop.population,
           location: row.location,
           t: row.data.t,
           cases: row.data.y,

@@ -11,6 +11,7 @@ export interface Row {
 export interface Combined {
   region: string;
   subregion: string;
+  population: number;
   location: Location;
   t: Array<Date>;
   cases: Array<number>;

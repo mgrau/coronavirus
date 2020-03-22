@@ -2316,6 +2316,11 @@ cosmiconfig@^5.0.0:
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
 
+country-json@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/country-json/-/country-json-1.1.0.tgz#5a683d3590febd70a1512dd8778eaa9ead40f680"
+  integrity sha512-iJV8zuaB30mD6uOSbYg0UViDrkg1KRf4d113JffNTC7n/RSsvMF4XlxOcnJuL24JQFVYRJvRShAmi2n7WygU9A==
+
 country-regex@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/country-regex/-/country-regex-1.1.0.tgz#51c333dcdf12927b7e5eeb9c10ac8112a6120896"
