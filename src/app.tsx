@@ -106,13 +106,13 @@ export default class App extends React.Component<
           <CombinedFigure
             title={
               "Number of deaths" +
-              (this.state.percapita ? " per 1000 people" : "")
+              (this.state.percapita ? " per 100,000 people" : "")
             }
             regions={this.filter(this.state.selection).map(row => ({
               name: row.region,
               t: row.t,
               y: this.state.percapita
-                ? row.deaths.map(value => (1000 * value) / row.population)
+                ? row.deaths.map(value => (100000 * value) / row.population)
                 : row.deaths
             }))}
             log={this.state.log}
@@ -121,13 +121,13 @@ export default class App extends React.Component<
           <CombinedFigure
             title={
               "Number of current cases" +
-              (this.state.percapita ? " per 1000 people" : "")
+              (this.state.percapita ? " per 100,000 people" : "")
             }
             regions={this.filter(this.state.selection).map(row => ({
               name: row.region,
               t: row.t,
               y: this.state.percapita
-                ? row.infected.map(value => (1000 * value) / row.population)
+                ? row.infected.map(value => (100000 * value) / row.population)
                 : row.infected
             }))}
             log={this.state.log}
@@ -212,7 +212,7 @@ export default class App extends React.Component<
                 this.setState({ percapita: event.target.checked })
               }
             />
-            <label>Show data per capita (per 1000 people)</label>
+            <label>Show data per capita (per 100,000 people)</label>
           </p>
         </div>
         <Footer />
