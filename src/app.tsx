@@ -25,6 +25,7 @@ export default class App extends React.Component<
     log: boolean;
     alphabetical: boolean;
     combined: boolean;
+    deaths: boolean;
     fraction: boolean;
     percapita: boolean;
   }
@@ -40,6 +41,7 @@ export default class App extends React.Component<
       log: false,
       alphabetical: false,
       combined: true,
+      deaths: false,
       fraction: false,
       percapita: false
     };
@@ -95,16 +97,37 @@ export default class App extends React.Component<
   render() {
     const figures =
       this.state.combined && this.state.selection.length > 1 ? (
-        <CombinedFigure
-          regions={this.filter(this.state.selection).map(row => ({
-            name: row.region,
-            t: row.t,
-            y: this.state.percapita
-              ? row.infected.map(value => (1000 * value) / row.population)
-              : row.infected
-          }))}
-          log={this.state.log}
-        />
+        this.state.deaths ? (
+          <CombinedFigure
+            title={
+              "Number of deaths" +
+              (this.state.percapita ? " per 1000 people" : "")
+            }
+            regions={this.filter(this.state.selection).map(row => ({
+              name: row.region,
+              t: row.t,
+              y: this.state.percapita
+                ? row.deaths.map(value => (1000 * value) / row.population)
+                : row.deaths
+            }))}
+            log={this.state.log}
+          />
+        ) : (
+          <CombinedFigure
+            title={
+              "Number of current cases" +
+              (this.state.percapita ? " per 1000 people" : "")
+            }
+            regions={this.filter(this.state.selection).map(row => ({
+              name: row.region,
+              t: row.t,
+              y: this.state.percapita
+                ? row.infected.map(value => (1000 * value) / row.population)
+                : row.infected
+            }))}
+            log={this.state.log}
+          />
+        )
       ) : (
         this.filter(this.state.selection).map((row, index) => {
           return (
@@ -164,6 +187,18 @@ export default class App extends React.Component<
             />
             <label>Show data as fraction of cases</label>
           </p>
+          {this.state.combined ? (
+            <p>
+              <input
+                type="checkbox"
+                defaultChecked={this.state.deaths}
+                onChange={event =>
+                  this.setState({ deaths: event.target.checked })
+                }
+              />
+              <label>Compare deaths</label>
+            </p>
+          ) : null}
           <p>
             <input
               type="checkbox"
