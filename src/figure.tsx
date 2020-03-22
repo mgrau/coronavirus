@@ -11,8 +11,10 @@ export default function Figure(props: {
   infected: Array<number>;
   recovered: Array<number>;
   deaths: Array<number>;
+  population: number;
   log?: boolean;
   fraction?: boolean;
+  percapita?: boolean;
 }) {
   if (
     props.cases === undefined ||
@@ -22,7 +24,37 @@ export default function Figure(props: {
   )
     return null;
 
-  const predict = fit(props.t, props.infected);
+  let cases = props.cases;
+  let infected = props.infected;
+  let recovered = props.recovered;
+  let deaths = props.deaths;
+  if (props.fraction) {
+    infected = props.infected.map((value, index) =>
+      Number((value / props.cases[index]).toFixed(4))
+    );
+    recovered = props.recovered.map((value, index) =>
+      Number((value / props.cases[index]).toFixed(4))
+    );
+    deaths = props.deaths.map((value, index) =>
+      Number((value / props.cases[index]).toFixed(4))
+    );
+  }
+  if (props.percapita) {
+    cases = props.cases.map(value =>
+      Number(((1000 * value) / props.population).toFixed(4))
+    );
+    infected = props.infected.map(value =>
+      Number(((1000 * value) / props.population).toFixed(4))
+    );
+    recovered = props.recovered.map(value =>
+      Number(((1000 * value) / props.population).toFixed(4))
+    );
+    deaths = props.deaths.map(value =>
+      Number(((1000 * value) / props.population).toFixed(4))
+    );
+  }
+
+  const predict = fit(props.t, infected);
   return (
     <Plot
       data={[
@@ -43,7 +75,7 @@ export default function Figure(props: {
           ? {}
           : {
               x: props.t,
-              y: props.cases,
+              y: cases,
               type: "scatter",
               mode: "lines",
               name: "cases",
@@ -51,11 +83,7 @@ export default function Figure(props: {
             },
         {
           x: props.t,
-          y: !props.fraction
-            ? props.infected
-            : props.infected.map((value, index) =>
-                (value / props.cases[index]).toFixed(2)
-              ),
+          y: infected,
           type: "scatter",
           mode: "lines",
           name: "infected",
@@ -63,11 +91,7 @@ export default function Figure(props: {
         },
         {
           x: props.t,
-          y: !props.fraction
-            ? props.recovered
-            : props.recovered.map((value, index) =>
-                (value / props.cases[index]).toFixed(2)
-              ),
+          y: recovered,
           type: "scatter",
           mode: "lines",
           name: "recovered",
@@ -75,11 +99,7 @@ export default function Figure(props: {
         },
         {
           x: props.t,
-          y: !props.fraction
-            ? props.deaths
-            : props.deaths.map((value, index) =>
-                (value / props.cases[index]).toFixed(2)
-              ),
+          y: deaths,
           type: "scatter",
           mode: "lines",
           name: "deaths",

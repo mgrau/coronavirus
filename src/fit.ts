@@ -15,7 +15,7 @@ export default function fit(
   );
   const predict = Array.from(
     Array(daysToFit + daysToPredict).keys()
-  ).map(value => Math.round(fit.predict(value)[1]));
+  ).map(value => Number(fit.predict(value)[1].toFixed(2)));
 
   const tpredict = Array.from(Array(daysToFit + daysToPredict).keys()).map(
     value => new Date(Number(tfit[0]) + msToDay * value)

@@ -26,6 +26,7 @@ export default class App extends React.Component<
     alphabetical: boolean;
     combined: boolean;
     fraction: boolean;
+    percapita: boolean;
   }
 > {
   constructor(props) {
@@ -39,7 +40,8 @@ export default class App extends React.Component<
       log: false,
       alphabetical: false,
       combined: true,
-      fraction: false
+      fraction: false,
+      percapita: false
     };
   }
 
@@ -96,7 +98,9 @@ export default class App extends React.Component<
           regions={this.filter(this.state.selection).map(row => ({
             name: row.region,
             t: row.t,
-            y: row.infected
+            y: this.state.percapita
+              ? row.infected.map(value => (1000 * value) / row.population)
+              : row.infected
           }))}
           log={this.state.log}
         />
@@ -108,6 +112,7 @@ export default class App extends React.Component<
               key={index}
               log={this.state.log}
               fraction={this.state.fraction}
+              percapita={this.state.percapita}
             />
           );
         })
@@ -157,6 +162,16 @@ export default class App extends React.Component<
               }
             />
             <label>Show data as fraction of cases</label>
+          </p>
+          <p>
+            <input
+              type="checkbox"
+              defaultChecked={this.state.percapita}
+              onChange={event =>
+                this.setState({ percapita: event.target.checked })
+              }
+            />
+            <label>Show data per capita (per 1000 people)</label>
           </p>
         </div>
         <Footer />
