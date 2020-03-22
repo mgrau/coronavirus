@@ -72,7 +72,13 @@ export default class App extends React.Component<
           },
           {
             ...cases[0],
-            region: region
+            region: region,
+            population:
+              region === "All"
+                ? 7700000000
+                : region === "All except China"
+                ? 6314000000
+                : cases[0].population
           }
         );
       }
