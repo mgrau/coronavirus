@@ -24,6 +24,7 @@ export default class App extends React.Component<
     lastUpdated: Date;
     log: boolean;
     alphabetical: boolean;
+    days: number;
     combined: boolean;
     deaths: boolean;
     fraction: boolean;
@@ -37,9 +38,10 @@ export default class App extends React.Component<
       regions: [],
       data: [],
       length: 0,
-      lastUpdated: null,
+      lastUpdated: new Date(),
       log: false,
       alphabetical: false,
+      days: 0,
       combined: true,
       deaths: false,
       fraction: false,
@@ -47,16 +49,29 @@ export default class App extends React.Component<
     };
   }
 
-  filter(selection: Array<string>): Array<Combined> {
+  filter(selection: Array<string>, filter_time = true): Array<Combined> {
     if (selection === null) return null;
 
     return selection.map(region => {
-      const cases = this.state.data.filter(
-        row =>
-          row.region === region ||
-          region === "All" ||
-          (region === "All except China" && row.region !== "China")
-      );
+      const cases = this.state.data
+        .filter(
+          row =>
+            row.region === region ||
+            region === "All" ||
+            (region === "All except China" && row.region !== "China")
+        )
+        .map(row =>
+          filter_time
+            ? {
+                ...row,
+                t: row.t.slice(0, this.state.days + 1),
+                cases: row.cases.slice(0, this.state.days + 1),
+                infected: row.infected.slice(0, this.state.days + 1),
+                recovered: row.recovered.slice(0, this.state.days + 1),
+                deaths: row.deaths.slice(0, this.state.days + 1)
+              }
+            : row
+        );
       if (cases.length === 0) return undefined;
       else if (cases.length === 1) return cases[0];
       else {
@@ -95,6 +110,7 @@ export default class App extends React.Component<
       selection: [regions[0]],
       regions: regions,
       length: length,
+      days: length,
       lastUpdated: data[0].t[length],
       data: data
     });
@@ -148,6 +164,11 @@ export default class App extends React.Component<
         })
       );
 
+    let d = new Date(this.state.lastUpdated);
+    d.setDate(
+      this.state.lastUpdated.getDate() - (this.state.length - this.state.days)
+    );
+
     return (
       <div id="app">
         <Regions
@@ -155,7 +176,7 @@ export default class App extends React.Component<
           regions={this.state.regions.map(region => {
             return {
               region: region,
-              cases: this.filter([region])[0].cases[this.state.length]
+              cases: this.filter([region], false)[0].cases[this.state.length]
             };
           })}
           select={selection => this.setState({ selection: selection })}
@@ -183,6 +204,18 @@ export default class App extends React.Component<
         {figures}
         <Header lastUpdated={this.state.lastUpdated} />
         <div id="options">
+          <p>
+            <input
+              type="range"
+              min="1"
+              max={this.state.length}
+              onChange={event =>
+                this.setState({ days: Number(event.target.value) })
+              }
+              value={this.state.days}
+            />
+            <label>{d.toDateString()}</label>
+          </p>
           <p>
             <input
               type="checkbox"
