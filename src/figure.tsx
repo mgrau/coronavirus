@@ -131,8 +131,10 @@ export default function Figure(props: {
             ? ` cases ${
                 predict.equation[1] > 0 ? "doubling" : "halving"
               } every ${(Math.log(2) / Math.abs(predict.equation[1])).toFixed(
-                1
-              )} days`
+                2
+              )} days (daily increase of ${Math.round(
+                100 * (Math.exp(Number(predict.equation[1])) - 1)
+              )}%)`
             : "")
       }}
       useResizeHandler={true}
