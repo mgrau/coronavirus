@@ -34,17 +34,14 @@ const population = require("country-json/src/country-by-population")
 // URLs from the JHU CSSE dataset
 const URLS = {
   cases:
-    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv",
-  recovered:
-    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv",
+    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
   deaths:
-    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv"
+    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
 };
 
 // combine the CSV files into one object
 export async function parseAll(): Promise<Array<Combined>> {
   const cases = await parseData(URLS.cases);
-  const recovered = await parseData(URLS.recovered);
   const deaths = await parseData(URLS.deaths);
 
   return (
@@ -59,11 +56,6 @@ export async function parseAll(): Promise<Array<Combined>> {
           location: row.location,
           t: row.data.t,
           cases: row.data.y,
-          infected: row.data.y.map(
-            (value, i) =>
-              value - recovered[index].data.y[i] - deaths[index].data.y[i]
-          ),
-          recovered: recovered[index].data.y,
           deaths: deaths[index].data.y
         };
       })
@@ -74,8 +66,6 @@ export async function parseAll(): Promise<Array<Combined>> {
             ...row,
             t: row.t.slice(0, -1),
             cases: row.cases.slice(0, -1),
-            infected: row.infected.slice(0, -1),
-            recovered: row.recovered.slice(0, -1),
             deaths: row.deaths.slice(0, -1)
           };
         } else {

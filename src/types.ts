@@ -15,8 +15,6 @@ export interface Combined {
   location: Location;
   t: Array<Date>;
   cases: Array<number>;
-  infected: Array<number>;
-  recovered: Array<number>;
   deaths: Array<number>;
 }
 
