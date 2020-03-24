@@ -8,33 +8,17 @@ export default function Figure(props: {
   region: string;
   t: Array<Date>;
   cases: Array<number>;
-  infected: Array<number>;
-  recovered: Array<number>;
   deaths: Array<number>;
   population: number;
   log?: boolean;
   fraction?: boolean;
   percapita?: boolean;
 }) {
-  if (
-    props.cases === undefined ||
-    props.infected === undefined ||
-    props.recovered === undefined ||
-    props.deaths === undefined
-  )
-    return null;
+  if (props.cases === undefined || props.deaths === undefined) return null;
 
   let cases = props.cases;
-  let infected = props.infected;
-  let recovered = props.recovered;
   let deaths = props.deaths;
   if (props.fraction) {
-    infected = props.infected.map((value, index) =>
-      Number((value / props.cases[index]).toFixed(4))
-    );
-    recovered = props.recovered.map((value, index) =>
-      Number((value / props.cases[index]).toFixed(4))
-    );
     deaths = props.deaths.map((value, index) =>
       Number((value / props.cases[index]).toFixed(4))
     );
@@ -43,18 +27,12 @@ export default function Figure(props: {
     cases = props.cases.map(value =>
       Number(((100000 * value) / props.population).toFixed(4))
     );
-    infected = props.infected.map(value =>
-      Number(((100000 * value) / props.population).toFixed(4))
-    );
-    recovered = props.recovered.map(value =>
-      Number(((100000 * value) / props.population).toFixed(4))
-    );
     deaths = props.deaths.map(value =>
       Number(((100000 * value) / props.population).toFixed(4))
     );
   }
 
-  const predict = fit(props.t, infected);
+  const predict = fit(props.t, cases);
   return (
     <Plot
       data={[
@@ -81,22 +59,6 @@ export default function Figure(props: {
               name: "cases",
               marker: { color: "blue" }
             },
-        {
-          x: props.t,
-          y: infected,
-          type: "scatter",
-          mode: "lines",
-          name: "infected",
-          marker: { color: "orange" }
-        },
-        {
-          x: props.t,
-          y: recovered,
-          type: "scatter",
-          mode: "lines",
-          name: "recovered",
-          marker: { color: "green" }
-        },
         {
           x: props.t,
           y: deaths,
