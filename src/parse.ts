@@ -35,6 +35,8 @@ const population = require("country-json/src/country-by-population")
 const URLS = {
   cases:
     "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
+  recovered:
+    "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv",
   deaths:
     "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
 };
@@ -42,12 +44,19 @@ const URLS = {
 // combine the CSV files into one object
 export async function parseAll(): Promise<Array<Combined>> {
   const cases = await parseData(URLS.cases);
+  const recovered = await parseData(URLS.recovered);
   const deaths = await parseData(URLS.deaths);
 
   return (
     cases
       .map((row, index) => {
-        const cpop = population.find(crow => crow.country == row.region);
+        const cpop = population.find(irow => irow.country == row.region);
+        const deaths_row = deaths.find(
+          irow => irow.region === row.region && irow.subregion === row.subregion
+        );
+        const recovered_row = recovered.find(
+          irow => irow.region === row.region && irow.subregion === row.subregion
+        );
 
         return {
           region: row.region,
@@ -56,7 +65,14 @@ export async function parseAll(): Promise<Array<Combined>> {
           location: row.location,
           t: row.data.t,
           cases: row.data.y,
-          deaths: deaths[index].data.y
+          infected: row.data.y.map(
+            (value, i) =>
+              value -
+              (recovered_row === undefined ? 0 : recovered_row.data.y[i]) -
+              deaths_row.data.y[i]
+          ),
+          recovered: recovered_row === undefined ? [0] : recovered_row.data.y,
+          deaths: deaths_row.data.y
         };
       })
       // if the raw data ends in zeros, remove that day.
@@ -66,6 +82,8 @@ export async function parseAll(): Promise<Array<Combined>> {
             ...row,
             t: row.t.slice(0, -1),
             cases: row.cases.slice(0, -1),
+            infected: row.infected.slice(0, -1),
+            recovered: row.recovered.slice(0, -1),
             deaths: row.deaths.slice(0, -1)
           };
         } else {

@@ -65,6 +65,8 @@ export default class App extends React.Component<
                 ...row,
                 t: row.t.slice(0, this.state.days + 1),
                 cases: row.cases.slice(0, this.state.days + 1),
+                infected: row.infected.slice(0, this.state.days + 1),
+                recovered: row.recovered.slice(0, this.state.days + 1),
                 deaths: row.deaths.slice(0, this.state.days + 1)
               }
             : row
@@ -77,6 +79,8 @@ export default class App extends React.Component<
             return {
               ...previous,
               cases: addArray(previous.cases, current.cases),
+              infected: addArray(previous.infected, current.infected),
+              recovered: addArray(previous.recovered, current.recovered),
               deaths: addArray(previous.deaths, current.deaths)
             };
           },
@@ -143,8 +147,8 @@ export default class App extends React.Component<
               name: row.region,
               t: row.t,
               y: this.state.percapita
-                ? row.cases.map(value => (100000 * value) / row.population)
-                : row.cases
+                ? row.infected.map(value => (100000 * value) / row.population)
+                : row.infected
             }))}
             log={this.state.log}
           />
