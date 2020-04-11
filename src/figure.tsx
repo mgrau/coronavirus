@@ -40,17 +40,17 @@ export default function Figure(props: {
     );
   }
   if (props.percapita) {
-    cases = props.cases.map(value =>
-      Number(((1000 * value) / props.population).toFixed(4))
+    cases = props.cases.map((value) =>
+      Number(((100000 * value) / props.population).toFixed(4))
     );
-    infected = props.infected.map(value =>
-      Number(((1000 * value) / props.population).toFixed(4))
+    infected = props.infected.map((value) =>
+      Number(((100000 * value) / props.population).toFixed(4))
     );
-    recovered = props.recovered.map(value =>
-      Number(((1000 * value) / props.population).toFixed(4))
+    recovered = props.recovered.map((value) =>
+      Number(((100000 * value) / props.population).toFixed(4))
     );
-    deaths = props.deaths.map(value =>
-      Number(((1000 * value) / props.population).toFixed(4))
+    deaths = props.deaths.map((value) =>
+      Number(((100000 * value) / props.population).toFixed(4))
     );
   }
 
@@ -68,8 +68,8 @@ export default function Figure(props: {
               line: {
                 dash: "dash",
                 width: 0.75,
-                color: "black"
-              }
+                color: "black",
+              },
             },
         props.fraction
           ? {}
@@ -79,7 +79,7 @@ export default function Figure(props: {
               type: "scatter",
               mode: "lines",
               name: "cases",
-              marker: { color: "blue" }
+              marker: { color: "blue" },
             },
         {
           x: props.t,
@@ -87,7 +87,7 @@ export default function Figure(props: {
           type: "scatter",
           mode: "lines",
           name: "infected",
-          marker: { color: "orange" }
+          marker: { color: "orange" },
         },
         {
           x: props.t,
@@ -95,7 +95,7 @@ export default function Figure(props: {
           type: "scatter",
           mode: "lines",
           name: "recovered",
-          marker: { color: "green" }
+          marker: { color: "green" },
         },
         {
           x: props.t,
@@ -103,13 +103,13 @@ export default function Figure(props: {
           type: "scatter",
           mode: "lines",
           name: "deaths",
-          marker: { color: "red" }
-        }
+          marker: { color: "red" },
+        },
       ]}
       layout={{
         yaxis: {
           type: props.log ? "log" : "linear",
-          autorange: true
+          autorange: true,
         },
         autosize: true,
         margin: {
@@ -117,13 +117,13 @@ export default function Figure(props: {
           r: 50,
           b: 30,
           t: 75,
-          pad: 0
+          pad: 0,
         },
         legend: {
           x: 0,
           xanchor: "left",
           y: 1,
-          bgcolor: "rgba(0,0,0,0)"
+          bgcolor: "rgba(0,0,0,0)",
         },
         title:
           props.region +
@@ -133,7 +133,7 @@ export default function Figure(props: {
               } every ${(Math.log(2) / Math.abs(predict.equation[1])).toFixed(
                 1
               )} days`
-            : "")
+            : ""),
       }}
       useResizeHandler={true}
       className="figure"
