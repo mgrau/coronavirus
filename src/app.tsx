@@ -45,21 +45,21 @@ export default class App extends React.Component<
       combined: true,
       deaths: false,
       fraction: false,
-      percapita: false
+      percapita: false,
     };
   }
 
   filter(selection: Array<string>, filter_time = true): Array<Combined> {
     if (selection === null) return null;
-    return selection.map(region => {
+    return selection.map((region) => {
       const cases = this.state.data
         .filter(
-          row =>
+          (row) =>
             row.region === region ||
             region === "All" ||
             (region === "All except China" && row.region !== "China")
         )
-        .map(row =>
+        .map((row) =>
           filter_time
             ? {
                 ...row,
@@ -67,7 +67,7 @@ export default class App extends React.Component<
                 cases: row.cases.slice(0, this.state.days + 1),
                 infected: row.infected.slice(0, this.state.days + 1),
                 recovered: row.recovered.slice(0, this.state.days + 1),
-                deaths: row.deaths.slice(0, this.state.days + 1)
+                deaths: row.deaths.slice(0, this.state.days + 1),
               }
             : row
         );
@@ -81,18 +81,13 @@ export default class App extends React.Component<
               cases: addArray(previous.cases, current.cases),
               infected: addArray(previous.infected, current.infected),
               recovered: addArray(previous.recovered, current.recovered),
-              deaths: addArray(previous.deaths, current.deaths)
+              deaths: addArray(previous.deaths, current.deaths),
             };
           },
           {
             ...cases[0],
             region: region,
-            population:
-              region === "All"
-                ? 7700000000
-                : region === "All except China"
-                ? 6314000000
-                : cases[0].population
+            population: region === "All" ? 7700000000 : cases[0].population,
           }
         );
       }
@@ -101,8 +96,8 @@ export default class App extends React.Component<
 
   componentDidMount = async () => {
     const data = await parseAll();
-    const regions = ["All", "All except China"]
-      .concat(data.map(value => value.region))
+    const regions = ["All"]
+      .concat(data.map((value) => value.region))
       .filter((value, index, array) => array.indexOf(value) === index);
     const length = data[0].t.length - 1;
     this.setState({
@@ -111,7 +106,7 @@ export default class App extends React.Component<
       length: length,
       days: length,
       lastUpdated: data[0].t[length],
-      data: data
+      data: data,
     });
   };
 
@@ -124,16 +119,16 @@ export default class App extends React.Component<
               "Number of deaths" +
               (this.state.percapita ? " per 100,000 people" : "")
             }
-            regions={this.filter(this.state.selection).map(row => ({
+            regions={this.filter(this.state.selection).map((row) => ({
               name: row.region,
               t: row.t,
               y: this.state.percapita
-                ? row.deaths.map(value => (100000 * value) / row.population)
+                ? row.deaths.map((value) => (100000 * value) / row.population)
                 : this.state.fraction
                 ? row.deaths.map((value, index) =>
                     Number((value / row.cases[index]).toFixed(4))
                   )
-                : row.deaths
+                : row.deaths,
             }))}
             log={this.state.log}
           />
@@ -143,12 +138,12 @@ export default class App extends React.Component<
               "Number of current cases" +
               (this.state.percapita ? " per 100,000 people" : "")
             }
-            regions={this.filter(this.state.selection).map(row => ({
+            regions={this.filter(this.state.selection).map((row) => ({
               name: row.region,
               t: row.t,
               y: this.state.percapita
-                ? row.infected.map(value => (100000 * value) / row.population)
-                : row.infected
+                ? row.infected.map((value) => (100000 * value) / row.population)
+                : row.infected,
             }))}
             log={this.state.log}
           />
@@ -176,27 +171,27 @@ export default class App extends React.Component<
       <div id="app">
         <Regions
           alphabetical={this.state.alphabetical}
-          regions={this.state.regions.map(region => {
+          regions={this.state.regions.map((region) => {
             return {
               region: region,
-              cases: this.filter([region], false)[0].cases[this.state.length]
+              cases: this.filter([region], false)[0].cases[this.state.length],
             };
           })}
-          select={selection => this.setState({ selection: selection })}
+          select={(selection) => this.setState({ selection: selection })}
         />
         <div id="log-check">
           <p>
             <input
               type="checkbox"
               defaultChecked={this.state.log}
-              onChange={event => this.setState({ log: event.target.checked })}
+              onChange={(event) => this.setState({ log: event.target.checked })}
             />
             <label>Log Plot</label>
 
             <input
               type="checkbox"
               defaultChecked={this.state.combined}
-              onChange={event =>
+              onChange={(event) =>
                 this.setState({ combined: event.target.checked })
               }
             />
@@ -212,7 +207,7 @@ export default class App extends React.Component<
               type="range"
               min="1"
               max={this.state.length}
-              onChange={event =>
+              onChange={(event) =>
                 this.setState({ days: Number(event.target.value) })
               }
               value={this.state.days}
@@ -223,7 +218,7 @@ export default class App extends React.Component<
             <input
               type="checkbox"
               defaultChecked={this.state.fraction}
-              onChange={event =>
+              onChange={(event) =>
                 this.setState({ fraction: event.target.checked })
               }
             />
@@ -234,7 +229,7 @@ export default class App extends React.Component<
               <input
                 type="checkbox"
                 defaultChecked={this.state.deaths}
-                onChange={event =>
+                onChange={(event) =>
                   this.setState({ deaths: event.target.checked })
                 }
               />
@@ -245,7 +240,7 @@ export default class App extends React.Component<
             <input
               type="checkbox"
               defaultChecked={this.state.percapita}
-              onChange={event =>
+              onChange={(event) =>
                 this.setState({ percapita: event.target.checked })
               }
             />

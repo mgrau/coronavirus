@@ -22,8 +22,6 @@ export default function Regions(props: {
           if (props.alphabetical) {
             if (a.region === "All") return -1;
             if (b.region === "All") return 1;
-            if (a.region === "All except China") return -1;
-            if (b.region === "All except China") return 1;
             if (a.region < b.region) return -1;
             if (a.region > b.region) return 1;
             return 0;
