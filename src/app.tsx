@@ -96,6 +96,7 @@ export default class App extends React.Component<
 
   componentDidMount = async () => {
     const data = await parseAll();
+    console.log(data);
     const regions = ["All"]
       .concat(data.map((value) => value.region))
       .filter((value, index, array) => array.indexOf(value) === index);

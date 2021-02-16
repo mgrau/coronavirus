@@ -11,6 +11,7 @@
   "author": "Matt Grau <matt.grau@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/mathjs": "^6.0.5",
     "@types/papaparse": "^5.0.3",
     "@types/plotly.js": "^1.44.31",
     "@types/react": "^16.9.23",
@@ -18,6 +19,7 @@
     "@types/react-plotly.js": "^2.2.4",
     "@types/regression": "^2.0.0",
     "country-json": "^1.1.0",
+    "mathjs": "^7.1.0",
     "papaparse": "^5.1.1",
     "parcel": "^1.12.4",
     "plotly.js": "^1.52.3",

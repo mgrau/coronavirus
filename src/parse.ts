@@ -1,5 +1,6 @@
 import Papa from "papaparse";
 import { Row, Combined } from "./types";
+import * as math from "mathjs";
 
 const population = require("country-json/src/country-by-population").concat([
   { country: "Serbia", population: 7022000 },
@@ -41,21 +42,28 @@ export async function parseAll(): Promise<Array<Combined>> {
             irow.region === row.region && irow.subregion === row.subregion
         );
 
+        const t = row.data.t;
+        const cases_data = row.data.y;
+        const recovered_data =
+          recovered_row === undefined
+            ? math.zeros(math.size(cases_data))
+            : recovered_row.data.y;
+        const deaths_data = deaths_row.data.y;
+        const infected_data = math.add(
+          cases_data,
+          math.multiply(-1, math.add(recovered_data, deaths_data))
+        );
+
         return {
           region: row.region,
           subregion: row.subregion,
           population: cpop === undefined ? undefined : cpop.population,
           location: row.location,
-          t: row.data.t,
-          cases: row.data.y,
-          infected: row.data.y.map(
-            (value, i) =>
-              value -
-              (recovered_row === undefined ? 0 : recovered_row.data.y[i]) -
-              deaths_row.data.y[i]
-          ),
-          recovered: recovered_row === undefined ? [0] : recovered_row.data.y,
-          deaths: deaths_row.data.y,
+          t: t,
+          cases: cases_data,
+          infected: infected_data,
+          recovered: recovered_data,
+          deaths: deaths_data,
         };
       })
       // if the raw data ends in zeros, remove that day.
